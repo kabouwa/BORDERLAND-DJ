@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+{% if created %}
+    <script>
+        window.onload = function() {
+            alertMesssage('Product Created ({{created}})', 'success','Done');
+        }
+    </script>
+{% endif %}
+{% if updated %}
+    <script>
+        window.onload = function() {
+            alertMesssage('Product {{updated}} Updated Successfully', 'warning','Done');
+        }
+    </script>
+{% endif %}
+{% if deleted %}
+    <script>
+        window.onload = function() {
+            alertMesssage('Product(s) Deleted Successfully', 'danger','Done');
+        }
+    </script>
+{% endif %}
+
+<div class="d-flex align-items-center justify-content-between mb-4 load-anim">
+    <p class="display-5 text-info fw-bold mb-0">
+        <i class="fa-solid fa-boxes-stacked me-2"></i>Products Inventory
+    </p>
+    <div>
+        <button type="button" class="btn btn-danger delete-btn" data-product-id="all">
+            <i class="fa-solid fa-trash"></i> Delete All ({{count}})
+        </button>
+        <a href="{% url "create" %}" class="btn btn-success">
+            <i class="fa-solid fa-circle-plus"></i> Add Product
+        </a>  
+    </div>
+    
+</div>
+
+<!-- Search Section -->
+<div class="search-section load-anim">
+    <form id="search-form" method="GET">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-9">
+                <label class="form-label">Search Products</label>
+                <input class="form-control" type="text" id="search" placeholder="Type to search...">
+                <span class="founded mt-1 d-block"></span>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex gap-2 flex-wrap">
+                    <button type="submit" class="btn btn-primary flex-grow-1" >
+                        <i class="fa-solid fa-magnifying-glass"></i> Search
+                    </button>
+                    
+                    <button type="button" class="btn btn-outline-secondary" onclick="location.reload()">
+                        <i class="fa-solid fa-broom"></i> Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Table -->
+<div class="table-wrapper load-anim">
+    <table class="table table-dark table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Price</th>
+                <th>Taxes</th>
+                <th>Ads</th>
+                <th>Total</th>
+                <th>Quantity</th>
+                <th>Sells</th>
+                <th>Category</th>
+                <th colspan="2" class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if count == 0 %}
+                <tr>
+                    <td colspan="11" class="text-center py-5" style="color: var(--text-3);">
+                        <i class="fa-solid fa-box-open fa-2x mb-3 d-block"></i>
+                        No products created yet.
+                    </td>
+                </tr>
+            {% endif %}
+            {% for p in products %}
+                <tr class="load-anim">
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>{{ p.name }}</strong></td>
+                    <td>{{ p.price }}</td>
+                    <td>{{ p.taxes }}</td>
+                    <td>{{ p.ads }}</td>
+                    <td><strong style="color: var(--success)">{{ p.total }}</strong></td>
+                    <td>{{ p.quantity }}</td>
+                    <td>{{ p.sells }}</td>
+                    <td><span style="background:var(--primary-light);color:var(--primary);padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:600">{{ p.category }}</span></td>
+                    <td>
+                        <button type="button" class="btn btn-warning btn-sm update-btn" data-product-id="{{ p.id }}">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm delete-btn" data-product-id="{{ p.id }}">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Confirm Modal -->
+<div class="confirm-modal">
+    <div class="confirm-box p-4">
+        <div class="text-center mb-3">
+            <i class="fa-solid fa-triangle-exclamation fa-2x" style="color: var(--danger)"></i>
+        </div>
+        <p class="text-center">Are you sure you want to delete this product?</p>
+        <div class="d-flex gap-3">
+            <button type="button" class="btn btn-outline-secondary w-100">
+                <i class="fa-solid fa-xmark"></i> Cancel
+            </button>
+            <button type="button" id="confirm-deleting" class="btn btn-danger w-100">
+                <i class="fa-solid fa-trash"></i> Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/product-search.js' %}"></script>
+    <script src="{% static 'js/product-actions.js' %}"></script>
+{% endblock scripts %}

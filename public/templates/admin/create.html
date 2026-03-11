@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="load-anim" style="max-width: 780px; margin: 0 auto;">
+
+    <p class="display-5 fw-bold mb-4" style="color: var(--primary)">
+        <i class="fa-solid fa-circle-plus me-2"></i>Create New Product
+    </p>
+
+    <div class="card-surface">
+        <form method="POST" class="row g-4" id="create-form" enctype="multipart/form-data">>
+            {% csrf_token %}
+
+            {% if errors %}
+                <div class="col-12">
+                    <div class="row g-2">
+                        {% for error in errors %}
+                            <div class="col-md-4">
+                                <div class="alert alert-danger mb-0">
+                                    <i class="fa-solid fa-circle-exclamation me-2"></i>{{ error }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Name -->
+            <div class="col-12">
+                <label class="form-label">Product Name *</label>
+                <input name="name" class="form-control" type="text" id="name" placeholder="Enter product name">
+            </div>
+
+            <!-- Product Image -->
+            <div class="col-12">
+                <label class="form-label">Product Image</label>
+                <div id="image-drop-zone" style="
+                    border: 2px dashed var(--border);
+                    border-radius: var(--radius-lg);
+                    padding: 32px;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: all var(--transition);
+                    background: var(--surface-2);
+                    position: relative;
+                ">
+                    <!-- Preview (hidden by default) -->
+                    <img id="image-preview" src="" alt="Preview" style="
+                        display: none;
+                        max-height: 180px;
+                        border-radius: var(--radius-md);
+                        object-fit: contain;
+                        margin-bottom: 10px;
+                    ">
+
+                    <!-- Placeholder -->
+                    <div id="image-placeholder">
+                        <i class="fa-solid fa-cloud-arrow-up fa-2x mb-2" style="color: var(--text-3);"></i>
+                        <p style="color: var(--text-3); margin: 0; font-size: 0.875rem;">
+                            Click to upload or drag & drop
+                        </p>
+                        <p style="color: var(--text-3); margin: 4px 0 0; font-size: 0.75rem;">
+                            PNG, JPG, WEBP — max 5MB
+                        </p>
+                    </div>
+
+                    <!-- Hidden real input -->
+                    <input type="file" name="image" id="image-input" accept="image/*" style="
+                        position: absolute; inset: 0;
+                        opacity: 0; cursor: pointer; width: 100%; height: 100%;
+                    ">
+                </div>
+
+                <!-- Remove button -->
+                <button type="button" id="remove-image" style="
+                    display: none; margin-top: 8px;
+                    font-size: 0.78rem; color: var(--danger);
+                    background: var(--danger-light); border: none;
+                    border-radius: var(--radius-sm); padding: 4px 12px; cursor: pointer;
+                ">
+                    <i class="fa-solid fa-xmark me-1"></i> Remove image
+                </button>
+            </div>
+
+            <!-- Financial -->
+            <div class="col-md-3">
+                <label class="form-label">Price *</label>
+                <input name="price" type="number" class="form-control financial-inputs" id="price" value="0" placeholder="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Taxes *</label>
+                <input name="taxes" type="number" class="form-control financial-inputs" id="taxes" value="0" placeholder="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Ads *</label>
+                <input name="ads" type="number" class="form-control financial-inputs" id="ads" value="0" placeholder="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Total</label>
+                <input name="total" type="number" id="total" class="form-control" readonly value="0">
+            </div>
+
+            <!-- Quantity & Sells -->
+            <div class="col-md-6">
+                <label class="form-label">Quantity *</label>
+                <input name="quantity" class="form-control count-field" type="number" id="quantity" placeholder="0" value="0" min="0">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Sells *</label>
+                <input name="sells" class="form-control count-field" type="number" id="sells" placeholder="0" value="0" min="0">
+            </div>
+
+            <!-- Category -->
+            <div class="col-12">
+                <label class="form-label">Category *</label>
+                <input name="category" class="form-control" type="text" id="category" placeholder="e.g. Electronics, Clothing...">
+            </div>
+
+            <!-- Description -->
+            <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea name="description" id="description" placeholder="Product description..." class="form-control">No information</textarea>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-md-6">
+                <button class="btn btn-success create-btn" type="submit">
+                    <i class="fa-solid fa-circle-plus"></i> Create Product
+                </button>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-outline-secondary create-btn" type="button" id="clear-btn">
+                    <i class="fa-solid fa-eraser"></i> Clear Form
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/calcs.js' %}"></script>
+    <script src="{% static 'js/validation/create-product.js' %}"></script>
+    <script src="{% static 'js/product-image.js' %}"></script>
+{% endblock scripts %}

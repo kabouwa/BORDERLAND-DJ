@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+{% if deleted %}
+    <script>
+        window.onload = function() {
+            setTimeout(() => {alertMesssage("Order Deleted Successfully", "success", "Done")}, 500)
+        }
+    </script>
+{% endif %}
+{% if updated %}
+    <script>
+        window.onload = function() {
+            setTimeout(() => {alertMesssage("Order Statut updated Successfully", "success", "Done")}, 500)
+        }
+    </script>
+{% endif %}
+
+
+<div class="d-flex align-items-center justify-content-between mb-4 load-anim">
+    <p class="display-5 fw-bold mb-0" style="color: var(--primary)">
+        <i class="fa-solid fa-clipboard-list me-2"></i>All Orders
+        <span style="font-size:1rem; color: var(--text-3); font-weight:500">({{ orders|length }} orders)</span>
+    </p>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-3 mb-4 load-anim">
+    <div class="col-6 col-md-3">
+        <div class="card-surface text-center" style="padding: 16px;">
+            <p style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; letter-spacing:0.05em; margin:0;">Total</p>
+            <p style="font-size:1.6rem; font-weight:700; color:var(--primary); margin:0;">{{ orders|length }}</p>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card-surface text-center" style="padding: 16px;">
+            <p style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; letter-spacing:0.05em; margin:0;">Pending</p>
+            <p style="font-size:1.6rem; font-weight:700; color:var(--warning); margin:0;">{{ pending_count }}</p>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card-surface text-center" style="padding: 16px;">
+            <p style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; letter-spacing:0.05em; margin:0;">Delivered</p>
+            <p style="font-size:1.6rem; font-weight:700; color:var(--success); margin:0;">{{ delivered_count }}</p>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card-surface text-center" style="padding: 16px;">
+            <p style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; letter-spacing:0.05em; margin:0;">Revenue</p>
+            <p style="font-size:1.6rem; font-weight:700; color:var(--success); margin:0;">{{ total_revenue }} Dhs</p>
+        </div>
+    </div>
+</div>
+
+<!-- Search -->
+<div class="search-section load-anim mb-4">
+    <form method="GET" id="search-form">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-8">
+                <label class="form-label">Search Orders</label>
+                <div style="position: relative;">
+                    <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:0.85rem;"></i>
+                    <input type="text" class="form-control" id="search" name="search" placeholder="Search by SKU, customer or product..." style="padding-left: 38px;"value=" {% if query %}{{query}}{% endif %} ">
+                </div>
+                <span class="founded mt-1 d-block"></span>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa-solid fa-magnifying-glass me-1"></i> Search
+                    </button>
+                    <a href="{% url "orders" %}"  class="btn btn-outline-secondary w-100">
+                        <i class="fa-solid fa-broom me-1"></i> Clear
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Table -->
+
+{% if not orders %}
+    <div class="card-surface text-center py-5 load-anim">
+        <i class="fa-solid fa-clipboard fa-3x mb-3" style="color: var(--text-3)"></i>
+        <p style="color: var(--text-2);">No orders yet.</p>
+    </div>
+{% endif %}
+
+
+<!-- Table -->
+<div class="table-wrapper load-anim">
+    <table class="table table-dark table-hover">
+        <thead>
+            <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th colspan="3" class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr class="load-anim" style="overflow:auto">
+                <td style="font-family: var(--font-mono); color: var(--text-3);">{{ order.sku }}</td>
+                <td>
+                    <strong>{{ order.customer.username }}</strong><br>
+                    <span style="font-size:0.75rem; color:var(--text-3);">{{ order.customer.email }}</span>
+                </td>
+                <td>
+                    <strong>{{ order.product.name }}</strong><br>
+                    <span style="background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:20px;font-size:0.72rem;font-weight:600;">{{ order.product.category }}</span>
+                </td>
+                <td>{{ order.quantity }}</td>
+                <td><strong style="color:var(--success);">{{ order.price }} Dhs</strong></td>
+                <td style="font-size:0.85rem;">{{ order.phone }}</td>
+                <td style="font-size:0.85rem; max-width:140px;">{{ order.address }}</td>
+
+                <!-- Status -->
+
+                {% comment %} <td>
+                    <div class="status-dropdown" style="position: relative;">
+                        <button type="button" class="btn status-toggle
+                            {% if order.status == 'pending' %}   bg-warning-subtle text-warning
+                            {% elif order.status == 'confirmed' %}bg-info-subtle text-info
+                            {% elif order.status == 'shipped' %}  bg-primary-subtle text-primary
+                            {% elif order.status == 'delivered' %}bg-success-subtle text-success
+                            {% elif order.status == 'cancelled' %}bg-danger-subtle text-danger
+                            {% endif %}">
+                            {{ order.status|capfirst }} ▾
+                        </button>
+                        <ul class="dropdown-menu p-1">
+                            <li><button type="button" data-order-statut="pending"   class="dropdown-item text-warning  bg-warning-subtle">⏳ Pending</button></li>
+                            <li><button type="button" data-order-statut="confirmed" class="dropdown-item text-info     bg-info-subtle">✅ Confirmed</button></li>
+                            <li><button type="button" data-order-statut="shipped"   class="dropdown-item text-primary  bg-primary-subtle">🚚 Shipped</button></li>
+                            <li><button type="button" data-order-statut="delivered" class="dropdown-item text-success  bg-success-subtle">📦 Delivered</button></li>
+                            <li><button type="button" data-order-statut="cancelled" class="dropdown-item text-danger   bg-danger-subtle">🚫 Cancelled</button></li>
+                        </ul>
+                    </div>
+                </td> {% endcomment %}
+
+
+                <td>
+                    <div class="status" >
+                        <button type="button" data-target="st-menu-{{forloop.counter}}" class="btn status-toggler
+                            {% if order.status == 'pending' %}   bg-warning-subtle text-warning
+                            {% elif order.status == 'confirmed' %}bg-info-subtle text-info
+                            {% elif order.status == 'shipped' %}  bg-primary-subtle text-primary
+                            {% elif order.status == 'delivered' %}bg-success-subtle text-success
+                            {% elif order.status == 'cancelled' %}bg-danger-subtle text-danger
+                            {% endif %}">
+                            {{ order.status|capfirst }} <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;margin-left:10px;margin-top: 2px;"></i>
+                        </button>
+
+
+                        <ul class="status-menu st-menu-{{forloop.counter}}">
+                            <li><button type="button" data-order-Id="{{order.id}}" data-order-statut="pending"   class="status-switcher dropdown-item text-warning  bg-warning-subtle">⏳ Pending</button></li>
+                            <li><button type="button" data-order-Id="{{order.id}}" data-order-statut="confirmed" class="status-switcher dropdown-item text-info     bg-info-subtle">✅ Confirmed</button></li>
+                            <li><button type="button" data-order-Id="{{order.id}}" data-order-statut="shipped"   class="status-switcher dropdown-item text-primary  bg-primary-subtle">🚚 Shipped</button></li>
+                            <li><button type="button" data-order-Id="{{order.id}}" data-order-statut="delivered" class="status-switcher dropdown-item text-success  bg-success-subtle">📦 Delivered</button></li>
+                            <li><button type="button" data-order-Id="{{order.id}}" data-order-statut="cancelled" class="status-switcher dropdown-item text-danger   bg-danger-subtle">🚫 Cancelled</button></li>
+                        </ul>
+                    </div>
+                </td>
+
+
+
+
+
+
+        
+
+                <td style="font-size:0.8rem; color:var(--text-3); white-space:nowrap;">{{ order.created_at|date:"d M Y" }}</td>
+
+                <!-- Contact -->
+                <td>
+                    <a href="https://wa.me/{{ order.phone }}?text=Hello%20*{{ order.customer.username }}*%2C%20this%20is%20BORDERLAND%20team%20regarding%20your%20order%20*{{ order.number }}*%20for%20*{{ order.product.name }}*."
+                        target="_blank"
+                        class="btn btn-success btn-sm"
+                        title="Contact on WhatsApp"
+                        style="padding: 6px 10px;"
+                    >
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                </td>
+
+                <!-- PDF -->
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-danger btn-sm pdf-btn"
+                        style="font-size:0.82rem; padding: 8px 12px;"
+                        data-order-id="{{ order.id }}"
+                        data-order-sku="{{ order.number }}"
+                        data-order-product="{{ order.product.name }}"
+                        data-order-quantity="{{ order.quantity }}"
+                        data-order-price="{{ order.price }}"
+                        data-order-phone="{{ order.phone }}"
+                        data-order-address="{{ order.address }}"
+                        data-order-status="{{ order.status }}"
+                        data-order-date="{{ order.created_at|date:'d M Y' }}"
+                        data-customer="{{ order.customer.username }}">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </button>
+                </td>
+
+                <!-- Delete -->
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-sm delete-order-btn"
+                        title="Delete Order"
+                        style="padding: 6px 10px; background: var(--danger-light); color: var(--danger);"
+                        data-order-id="{{ order.id }}">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="confirm-modal" id="delete-modal">
+    <div class="confirm-box p-4">
+        <div class="text-center mb-3">
+            <i class="fa-solid fa-triangle-exclamation fa-2x" style="color: var(--danger)"></i>
+        </div>
+        <p class="text-center">Are you sure you want to delete this order?</p>
+        <div class="d-flex gap-3">
+            <button type="button" id="cancel-delete" class="btn btn-outline-secondary w-100">
+                <i class="fa-solid fa-xmark"></i> Cancel
+            </button>
+            <button type="button" id="confirm-delete" class="btn btn-danger w-100">
+                <i class="fa-solid fa-trash"></i> Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/pdf-gen.js' %}"></script>
+    <script src="{% static 'js/orders-actions.js' %}"></script>
+    {% comment %} <script src="{% static 'js/orders-search.js' %}"></script> {% endcomment %}
+{% endblock scripts %}

@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BORDERLAND - Shop</title>
+    <link rel="icon" href="{% static 'images/R.ico' %}" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block head %}{% endblock head %}
+</head>
+<body>
+    <div class="alerts position-fixed"></div>
+    {% include "includes/header.html" %}
+    
+    {% if user.is_staff %}
+        <div class="bg-warning text-dark text-center" style="padding: 4px; font-size: 0.9rem;">
+            <p class="mb-0"><i class="fa-solid fa-user-shield me-1"></i>Admin Access</p>
+        </div>
+    {% endif %}
+
+    <div class="site-hero">
+        <div class="container">
+            <p class="display-3 load-anim">BORDERLAND</p>
+            <p class="h4 load-anim">Create · Read · Update · Delete · Search</p>
+            <p class="h5 load-anim">Products Management System</p>
+        </div>
+    </div>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include "includes/footer.html" %}
+
+    
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/alerts.js' %}"></script>
+    {% block scripts %}{% endblock scripts %}
+</body>
+</html>

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-4 load-anim">
+    <p class="display-5 fw-bold mb-0" style="color: var(--primary)">
+        <i class="fa-solid fa-store me-2"></i>Catalog <span style="font-size:1rem; color: var(--text-3); font-weight:500">({{ count }} products)</span>
+    </p>
+</div>
+
+{% if count == 0 %}
+    <div class="card-surface text-center py-5 load-anim">
+        <i class="fa-solid fa-box-open fa-3x mb-3" style="color: var(--text-3)"></i>
+        <p style="color: var(--text-2)">No products available yet.</p>
+    </div>
+{% endif %}
+
+<!-- Products Grid -->
+<div class="row g-4">
+    {% for p in products %}
+    <div class="col-md-4 col-sm-6 load-anim">
+        <div class="card-surface h-100 d-flex flex-column" style="padding: 20px;">
+
+            {% if p.image %}
+                <img src="/media/{{ p.image }}" alt="{{ p.name }}" class="product-img">
+            {% endif %}
+            <!-- Category badge -->
+            <span style="
+                background: var(--primary-light); color: var(--primary);
+                padding: 3px 12px; border-radius: 20px;
+                font-size: 0.75rem; font-weight: 600;
+                width: fit-content; margin-bottom: 12px;
+            ">{{ p.category }}</span>
+
+            <!-- Name -->
+            <p class="fw-bold mb-1" style="font-size: 1.05rem; color: var(--text-1);">{{ p.name }}</p>
+
+            <!-- Description -->
+            <p style="font-size: 0.85rem; color: var(--text-2); flex-grow: 1;">{{ p.description }}</p>
+
+            <!-- Price & Stock -->
+            <div class="d-flex align-items-center justify-content-between mt-2 mb-3">
+                <div>
+                    <span style="font-size: 0.75rem; color: var(--text-3);">Total price</span><br>
+                    <strong style="font-size: 1.3rem; color: var(--success);">{{ p.total }}</strong>
+                    <span style="font-size: 0.75rem; color: var(--text-3);">Dhs</span>
+                </div>
+                <div class="text-end">
+                    <span style="font-size: 0.75rem; color: var(--text-3);">In stock</span><br>
+                    <strong style="color: {% if p.quantity > 0 %}var(--success){% else %}var(--danger){% endif %}">
+                        {{ p.quantity }}
+                    </strong>
+                </div>
+            </div>
+
+            <!-- Order button -->
+            {% if p.quantity > 0 %}
+                <a href="{% url 'create_order' %}?product_id={{ p.id }}" class="btn btn-primary w-100"> <i class="fa-solid fa-cart-plus me-1"></i> Order Now</a>
+            {% else %}
+                <button class="btn w-100" disabled style="background: var(--surface-2); color: var(--text-3); cursor: not-allowed;">
+                    <i class="fa-solid fa-ban me-1"></i> Out of Stock
+                </button>
+            {% endif %}
+
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

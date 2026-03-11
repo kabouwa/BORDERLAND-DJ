@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="home-intro load-anim">
+    <p class="display-5 mb-3">Welcome back, <br><span style="color: var(--primary)">{{ request.user.username }} 👋</span></p>
+    <p>Browse our catalog, place orders and track your deliveries all in one place.</p>
+
+    <div class="start-actions mt-4">
+        <a href="{% url 'catalog' %}" class="btn btn-primary">
+            <i class="fa-solid fa-store"></i> Browse Catalog
+        </a>
+        <a href="{% url 'customer_orders'%}" class="btn btn-success">
+            <i class="fa-solid fa-box"></i> My Orders
+        </a>
+    </div>
+</div>
+
+<div class="home-intro load-anim" style="margin-top: 0; background: var(--surface-2); color: var(--text-2); font-size: 0.95rem;">
+    <i class="fa-solid fa-circle-info me-2" style="color: var(--info)"></i>
+    Fast delivery, quality products. Place your order in seconds and we handle the rest.
+</div>
+
+{% endblock %}

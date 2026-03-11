@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="load-anim" style="max-width: 780px; margin: 0 auto;">
+
+    <p class="display-5 fw-bold mb-4" style="color: var(--warning)">
+        <i class="fa-solid fa-pen-to-square me-2"></i>Update Product
+    </p>
+
+    <div class="card-surface">
+        <form method="POST" class="row g-4" id="update-form">
+            {% csrf_token %}
+
+            {% if errors %}
+                <div class="col-12">
+                    <div class="row g-2">
+                        {% for error in errors %}
+                            <div class="col-md-4">
+                                <div class="alert alert-danger mb-0">
+                                    <i class="fa-solid fa-circle-exclamation me-2"></i>{{ error }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Name -->
+            <div class="col-12">
+                <label class="form-label">Product Name *</label>
+                <input name="name" class="form-control" type="text" id="name" placeholder="Product name" value="{{ p.name }}">
+            </div>
+
+            <!-- Financial -->
+            <div class="col-md-3">
+                <label class="form-label">Price *</label>
+                <input name="price" type="number" class="form-control financial-inputs" id="price" value="{{ p.price }}" placeholder="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Taxes *</label>
+                <input name="taxes" type="number" class="form-control financial-inputs" id="taxes" value="{{ p.taxes }}" placeholder="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Ads *</label>
+                <input name="ads" type="number" class="form-control financial-inputs" id="ads" value="{{ p.ads }}" placeholder="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Total</label>
+                <input name="total" type="number" id="total" class="form-control" readonly value="{{ p.total }}">
+            </div>
+
+            <!-- Quantity & Sells -->
+            <div class="col-md-6">
+                <label class="form-label">Quantity *</label>
+                <input name="quantity" class="form-control count-field" type="number" id="quantity" placeholder="0" value="{{ p.quantity }}" min="0">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Sells *</label>
+                <input name="sells" class="form-control count-field" type="number" id="sells" placeholder="0" value="{{ p.sells }}" min="0">
+            </div>
+
+            <!-- Category -->
+            <div class="col-12">
+                <label class="form-label">Category *</label>
+                <input name="category" class="form-control" type="text" id="category" placeholder="Category" value="{{ p.category }}">
+            </div>
+
+            <!-- Description -->
+            <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea name="description" id="description" placeholder="Description..." class="form-control">{{ p.description }}</textarea>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-md-6">
+                <button class="btn btn-warning create-btn" type="submit">
+                    <i class="fa-solid fa-pen-to-square"></i> Update Product
+                </button>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-outline-secondary create-btn" type="button" id="clear-btn">
+                    <i class="fa-solid fa-eraser"></i> Reset Fields
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/calcs.js' %}"></script>
+    <script src="{% static 'js/validation/update-product.js' %}"></script>
+{% endblock scripts %}

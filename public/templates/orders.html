@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-4 load-anim">
+    <p class="display-5 fw-bold mb-0" style="color: var(--primary)">
+        <i class="fa-solid fa-box me-2"></i>My Orders
+        <span style="font-size:1rem; color: var(--text-3); font-weight:500">({{ orders|length }} orders)</span>
+    </p>
+</div>
+
+{% if not orders %}
+    <div class="card-surface text-center py-5 load-anim">
+        <i class="fa-solid fa-box-open fa-3x mb-3" style="color: var(--text-3)"></i>
+        <p style="color: var(--text-2);" class="mb-3">You have no orders yet.</p>
+        <a href="{% url 'catalog' %}" class="btn btn-primary">
+            <i class="fa-solid fa-store me-1"></i> Browse Catalog
+        </a>
+    </div>
+{% endif %}
+
+<div class="row g-4">
+    {% for order in orders %}
+    <div class="col-md-6 col-lg-4 load-anim">
+        <div class="card-surface h-100 d-flex flex-column" style="padding: 20px;" id="order-card-{{ order.id }}">
+
+            <!-- Header -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-3); font-weight:600;">
+                    #Order - {{ order.sku }}
+                </span>
+                <!-- Status badge -->
+                <span style="
+                    padding: 4px 12px; border-radius: 20px;
+                    font-size: 0.75rem; font-weight: 700;
+                    {% if order.status == 'pending' %}   background:#fef3c7; color:#d97706;
+                    {% elif order.status == 'confirmed' %}background:#dbeafe; color:#2563eb;
+                    {% elif order.status == 'shipped' %}  background:#ede9fe; color:#7c3aed;
+                    {% elif order.status == 'delivered' %}background:#dcfce7; color:#16a34a;
+                    {% elif order.status == 'cancelled' %}background:#fee2e2; color:#dc2626;
+                    {% endif %}
+                ">
+                    <i class="fa-solid
+                        {% if order.status == 'pending' %}fa-clock
+                        {% elif order.status == 'confirmed' %}fa-circle-check
+                        {% elif order.status == 'shipped' %}fa-truck
+                        {% elif order.status == 'delivered' %}fa-box-open
+                        {% elif order.status == 'cancelled' %}fa-ban
+                        {% endif %} me-1">
+                    </i>
+                    {{ order.status|capfirst }}
+                </span>
+            </div>
+
+            <!-- Product info -->
+            <p class="fw-bold mb-1" style="font-size: 1rem; color: var(--text-1);">
+                <i class="fa-solid fa-box fa-sm me-1" style="color: var(--primary)"></i>
+                {{ order.product.name }}
+            </p>
+            <span style="
+                background: var(--primary-light); color: var(--primary);
+                padding: 2px 10px; border-radius: 20px;
+                font-size: 0.72rem; font-weight: 600;
+                width: fit-content; display:inline-block; margin-bottom: 12px;
+            ">{{ order.product.category }}</span>
+
+            <!-- Order details -->
+            <div style="background: var(--surface-2); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 14px; flex-grow:1;">
+                <div class="d-flex justify-content-between mb-1">
+                    <span style="font-size:0.8rem; color:var(--text-3);">Quantity</span>
+                    <strong style="font-size:0.85rem;">{{ order.quantity }}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span style="font-size:0.8rem; color:var(--text-3);">Total paid</span>
+                    <strong style="font-size:0.85rem; color:var(--success);">{{ order.price }} Dhs</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span style="font-size:0.8rem; color:var(--text-3);">Phone</span>
+                    <strong style="font-size:0.85rem;">{{ order.phone }}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span style="font-size:0.8rem; color:var(--text-3);">Address</span>
+                    <strong style="font-size:0.85rem; text-align:right; max-width:60%;">{{ order.address }}</strong>
+                </div>
+                {% if order.notes and order.notes != "N/A" %}
+                <div class="d-flex justify-content-between">
+                    <span style="font-size:0.8rem; color:var(--text-3);">Notes</span>
+                    <strong style="font-size:0.85rem; text-align:right; max-width:60%;">{{ order.notes }}</strong>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Date -->
+            <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:14px;">
+                <i class="fa-solid fa-calendar-days me-1"></i>
+                {{ order.created_at|date:"d M Y - H:i" }}
+            </p>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2">
+
+                <!-- WhatsApp Button -->
+                <a href="https://wa.me/447301480146?text=
+                Hello%2C%20I%27m%20*{{ request.user.username }}*%20and%20I%20placed%20an%20order%20*%23{{ order.id }}*%20for%20*{{ order.product.name }}*%20(x{{ order.quantity }}).%20I%20wanted%20to%20check%20on%20its%20status.%20Thank%20you%20🙏"
+                target="_blank" class="btn btn-success w-100" style="font-size:0.82rem; padding: 8px 12px;">
+                    <i class="fa-brands fa-whatsapp me-1"></i> Contact
+                </a>
+
+                <!-- PDF Button -->
+                <button
+                    type="button"
+                    class="btn btn-primary w-100 pdf-btn"
+                    data-order-id="{{ order.id }}"
+                    data-order-sku="{{ order.sku }}"
+                    data-order-product="{{ order.product.name }}"
+                    data-order-quantity="{{ order.quantity }}"
+                    data-order-price="{{ order.price }}"
+                    data-order-phone="{{ order.phone }}"
+                    data-order-address="{{ order.address }}"
+                    data-order-status="{{ order.status }}"
+                    data-order-date="{{ order.created_at|date:'d M Y' }}"
+                    data-customer="{{ request.user.username }}"
+                    style="font-size:0.82rem; padding: 8px 12px; background-color:var(--danger) !important"
+                >
+                    <i class="fa-solid fa-file-pdf me-1"></i> PDF
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+
+</script>
+
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/pdf-gen.js' %}"></script>
+{% endblock scripts %}
