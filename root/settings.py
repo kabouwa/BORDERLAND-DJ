@@ -30,9 +30,15 @@ SECRET_KEY = SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [ '*'
-    # '10.160.236.250'
+ALLOWED_HOSTS = [ 
+    '*'
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://borderland-dj.up.railway.app',
+]
+
+
 
 
 # Application definition
