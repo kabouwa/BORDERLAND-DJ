@@ -31,7 +31,7 @@ SECRET_KEY = SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = [ 
-    '*'
+    'borderland-dj.up.railway.app'
 ]
 
 
