@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
     '*'
 ]
 
+
 CSRF_TRUSTED_ORIGINS = [
     'https://borderland-dj.up.railway.app',
 ]
