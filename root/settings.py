@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 from pathlib import Path
-import dj_database_url
+#import dj_database_url
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -30,16 +30,20 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'borderland.sytes.net',
+    'www.borderland.sytes.net',
+    '79.72.57.159'
+]
 
 
-# CSRF_TRUSTED_ORIGINS = [
-#     'https://borderland-dj.up.railway.app',
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://borderland-dj.up.railway.app',
+]
 
 
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 # Application definition
 
