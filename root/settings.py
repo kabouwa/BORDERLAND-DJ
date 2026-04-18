@@ -40,10 +40,14 @@ ALLOWED_HOSTS = [
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://borderland-dj.up.railway.app',
+    "http://79.72.57.159",
+    "http://borderland.sytes.net",
+    "https://www.borderland.sytes.net",
+    "https://borderland.sytes.net",
+    "https://www.borderland.sytes.net",
 ]
 
-
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
