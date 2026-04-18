@@ -59,5 +59,3 @@ class Order(models.Model):
     
     def total_price(self):
         return self.product.total
-    
-    
