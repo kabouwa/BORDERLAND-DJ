@@ -31,9 +31,11 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '79.72.57.159',
     'borderland.sytes.net',
-    'www.borderland.sytes.net',
-    '79.72.57.159'
+    'www.borderland.sytes.net'
 ]
 
 
